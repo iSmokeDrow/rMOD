@@ -1,0 +1,14 @@
+﻿db.ip:(local)
+db.port:1433
+db.world.name:Arcadia
+db.world.username:
+db.world.password:
+db.trusted.connection:1
+db.save.drop:1
+db.save.backup:1
+load.directory:
+structure.autoload:1
+structure.directory:G:\GitHub\rMOD\rMOD\bin\Debug\Structures
+use.ascii:1
+save.directory:
+save.hashed:1
