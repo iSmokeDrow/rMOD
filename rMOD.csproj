@@ -94,11 +94,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\TabControls.cs">
+    <Compile Include="Controls\rdbTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\TabControls.Designer.cs">
-      <DependentUpon>TabControls.cs</DependentUpon>
+    <Compile Include="Controls\rdbTab.Designer.cs">
+      <DependentUpon>rdbTab.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\BitConverterExt.cs" />
     <Compile Include="Functions\ByteConverterExt.cs" />
@@ -135,13 +135,14 @@
     <Compile Include="StructuresGUI.Designer.cs">
       <DependentUpon>StructuresGUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Structures\CoreInfo.cs" />
     <Compile Include="Structures\DatabaseSettings.cs" />
     <Compile Include="Structures\Encodings.cs" />
     <Compile Include="Structures\Enums.cs" />
     <Compile Include="Structures\FileSettings.cs" />
     <Compile Include="Structures\StructureInfo.cs" />
-    <EmbeddedResource Include="Controls\TabControls.resx">
-      <DependentUpon>TabControls.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\rdbTab.resx">
+      <DependentUpon>rdbTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InputGUI.resx">
       <DependentUpon>InputGUI.cs</DependentUpon>

@@ -130,6 +130,19 @@ namespace rMOD.Functions
                         break;
                 }
             }
+            else if (inName.Contains("motion"))
+            {
+                switch (type)
+                {
+                    case NameType.File:
+                        outName = "db_monstermotionset";
+                        break;
+
+                    case NameType.Table:
+                        outName = "MonsterMotionSetResource";
+                        break;
+                }
+            }
             else if (inName.Contains("monster"))
             {
                 switch (type)

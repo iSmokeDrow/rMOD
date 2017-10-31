@@ -32,10 +32,19 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUI));
             this.menu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ejToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sQLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.sQLToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.manageStructuresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabsNewRDB_btn = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabsNewData_btn = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabsNewScript_btn = new System.Windows.Forms.ToolStripMenuItem();
             this.currentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reload = new System.Windows.Forms.ToolStripMenuItem();
             this.dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,12 +70,6 @@
             this.structureDataToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ejToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sQLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.sQLToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menu.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabContextMenu.SuspendLayout();
@@ -95,6 +98,52 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ejToolStripMenuItem,
+            this.sQLToolStripMenuItem});
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            // 
+            // ejToolStripMenuItem
+            // 
+            this.ejToolStripMenuItem.Name = "ejToolStripMenuItem";
+            this.ejToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
+            this.ejToolStripMenuItem.Text = "File";
+            this.ejToolStripMenuItem.Click += new System.EventHandler(this.readFileBtn_Click);
+            // 
+            // sQLToolStripMenuItem
+            // 
+            this.sQLToolStripMenuItem.Name = "sQLToolStripMenuItem";
+            this.sQLToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
+            this.sQLToolStripMenuItem.Text = "SQL";
+            this.sQLToolStripMenuItem.Click += new System.EventHandler(this.loadSQLBtn_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem1,
+            this.sQLToolStripMenuItem1});
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            // 
+            // fileToolStripMenuItem1
+            // 
+            this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
+            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(95, 22);
+            this.fileToolStripMenuItem1.Text = "File";
+            this.fileToolStripMenuItem1.Click += new System.EventHandler(this.saveFileBtn_Click);
+            // 
+            // sQLToolStripMenuItem1
+            // 
+            this.sQLToolStripMenuItem1.Name = "sQLToolStripMenuItem1";
+            this.sQLToolStripMenuItem1.Size = new System.Drawing.Size(95, 22);
+            this.sQLToolStripMenuItem1.Text = "SQL";
+            this.sQLToolStripMenuItem1.Click += new System.EventHandler(this.saveSQLBtn_Click);
+            // 
             // manageStructuresToolStripMenuItem
             // 
             this.manageStructuresToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -107,7 +156,7 @@
             // reloadToolStripMenuItem
             // 
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.reloadToolStripMenuItem.Text = "Reload";
             this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadBtn_Click);
             // 
@@ -117,15 +166,40 @@
             this.newToolStripMenuItem,
             this.currentToolStripMenuItem});
             this.tabsToolStripMenuItem.Name = "tabsToolStripMenuItem";
-            this.tabsToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.tabsToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.tabsToolStripMenuItem.Text = "Tabs";
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tabsNewRDB_btn,
+            this.tabsNewData_btn,
+            this.tabsNewScript_btn});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newTab_Click);
+            // 
+            // tabsNewRDB_btn
+            // 
+            this.tabsNewRDB_btn.Name = "tabsNewRDB_btn";
+            this.tabsNewRDB_btn.Size = new System.Drawing.Size(152, 22);
+            this.tabsNewRDB_btn.Text = "RDB";
+            this.tabsNewRDB_btn.Click += new System.EventHandler(this.newTab_Click);
+            // 
+            // tabsNewData_btn
+            // 
+            this.tabsNewData_btn.Name = "tabsNewData_btn";
+            this.tabsNewData_btn.Size = new System.Drawing.Size(152, 22);
+            this.tabsNewData_btn.Text = "Data";
+            this.tabsNewData_btn.Click += new System.EventHandler(this.newTab_Click);
+            // 
+            // tabsNewScript_btn
+            // 
+            this.tabsNewScript_btn.Name = "tabsNewScript_btn";
+            this.tabsNewScript_btn.Size = new System.Drawing.Size(152, 22);
+            this.tabsNewScript_btn.Text = "Script";
+            this.tabsNewScript_btn.Click += new System.EventHandler(this.newTab_Click);
             // 
             // currentToolStripMenuItem
             // 
@@ -134,7 +208,7 @@
             this.clear,
             this.close});
             this.currentToolStripMenuItem.Name = "currentToolStripMenuItem";
-            this.currentToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.currentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.currentToolStripMenuItem.Text = "Current";
             this.currentToolStripMenuItem.MouseEnter += new System.EventHandler(this.currentToolStripMenuItem_MouseEnter);
             // 
@@ -187,14 +261,14 @@
             // settingsDatabase
             // 
             this.settingsDatabase.Name = "settingsDatabase";
-            this.settingsDatabase.Size = new System.Drawing.Size(122, 22);
+            this.settingsDatabase.Size = new System.Drawing.Size(152, 22);
             this.settingsDatabase.Text = "Database";
             this.settingsDatabase.Click += new System.EventHandler(this.settingsDatabase_Click);
             // 
             // settingsFile
             // 
             this.settingsFile.Name = "settingsFile";
-            this.settingsFile.Size = new System.Drawing.Size(122, 22);
+            this.settingsFile.Size = new System.Drawing.Size(152, 22);
             this.settingsFile.Text = "File";
             this.settingsFile.Click += new System.EventHandler(this.settingsFile_Click);
             // 
@@ -350,52 +424,6 @@
             this.closeToolStripMenuItem1.Text = "Close";
             this.closeToolStripMenuItem1.Click += new System.EventHandler(this.closeTab_Click);
             // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ejToolStripMenuItem,
-            this.sQLToolStripMenuItem});
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            // 
-            // ejToolStripMenuItem
-            // 
-            this.ejToolStripMenuItem.Name = "ejToolStripMenuItem";
-            this.ejToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.ejToolStripMenuItem.Text = "File";
-            this.ejToolStripMenuItem.Click += new System.EventHandler(this.readFileBtn_Click);
-            // 
-            // sQLToolStripMenuItem
-            // 
-            this.sQLToolStripMenuItem.Name = "sQLToolStripMenuItem";
-            this.sQLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.sQLToolStripMenuItem.Text = "SQL";
-            this.sQLToolStripMenuItem.Click += new System.EventHandler(this.loadSQLBtn_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem1,
-            this.sQLToolStripMenuItem1});
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            // 
-            // fileToolStripMenuItem1
-            // 
-            this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
-            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.fileToolStripMenuItem1.Text = "File";
-            this.fileToolStripMenuItem1.Click += new System.EventHandler(this.saveFileBtn_Click);
-            // 
-            // sQLToolStripMenuItem1
-            // 
-            this.sQLToolStripMenuItem1.Name = "sQLToolStripMenuItem1";
-            this.sQLToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.sQLToolStripMenuItem1.Text = "SQL";
-            this.sQLToolStripMenuItem1.Click += new System.EventHandler(this.saveSQLBtn_Click);
-            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -459,6 +487,9 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem sQLToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem tabsNewRDB_btn;
+        private System.Windows.Forms.ToolStripMenuItem tabsNewData_btn;
+        private System.Windows.Forms.ToolStripMenuItem tabsNewScript_btn;
     }
 }
 

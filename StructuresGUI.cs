@@ -52,9 +52,10 @@ namespace rMOD
             }
         }
 
+        // TODO: Changes to the structureBL need to trigger updates to the tab structureList
         private void remBtn_Click(object sender, EventArgs e)
         {
-            string key = structureGrid.SelectedRows[0].Cells[0].Value.ToString();
+            string key = structureGrid.SelectedRows[0].Cells["key"].Value.ToString();
             if (key.Length > 0) { structureBL.Remove(structureBL.First(s => s.Key == key)); }          
         }
     }

@@ -6,12 +6,12 @@ using rMOD.Structures;
 
 namespace rMOD.Controls
 {
-    public partial class TabControls : UserControl
+    public partial class rdbTab : UserControl
     {
         public string FilePath { get; set; }
         public string FileName { get { return System.IO.Path.GetFileName(FilePath); } }
 
-        public TabControls()
+        public rdbTab()
         {
             InitializeComponent();
         }
@@ -19,6 +19,7 @@ namespace rMOD.Controls
         public void SetStructureListChangedEvent(EventHandler handler) { structureList.SelectedIndexChanged += handler; }
         public void SetStructureListBtnClickEvent(EventHandler handler) { structureList.Click += handler; }
         public void SetGridCellValueNeededEvent(DataGridViewCellValueEventHandler handler) { DataGrid.CellValueNeeded += handler; }
+        public void SetGridCellValuePushedEvent(DataGridViewCellValueEventHandler handler) { DataGrid.CellValuePushed += handler; }
         public void SetEncodingListChangedEvent(EventHandler handler) { encodingsList.SelectedIndexChanged += handler; }
         public void SetSearchDataBtnClickEvent(EventHandler handler) { searchDataBtn.Click += handler; }
 

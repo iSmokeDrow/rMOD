@@ -152,11 +152,19 @@ namespace rMOD.Functions
                                             newRow[i] = Convert.ToDouble(sqlRdr[field.Name]);
                                             break;
 
+                                        case "sid":
+                                            newRow[i] = Convert.ToInt32(sqlRdr[field.Name]);
+                                            break;
+
                                         case "string":
                                             newRow[i] = Convert.ToString(sqlRdr[field.Name]);
                                             break;
 
                                         case "stringbylen":
+                                            newRow[i] = Convert.ToString(sqlRdr[field.Name]);
+                                            break;
+
+                                        case "stringbyref":
                                             newRow[i] = Convert.ToString(sqlRdr[field.Name]);
                                             break;
                                     }

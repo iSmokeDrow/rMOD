@@ -43,9 +43,8 @@ namespace rMOD.Functions
             if (!File.Exists(infoPath)) { create(); }
             if (!Directory.Exists(structuresDir) && OPT.StringIsNull("structure.directory")) { Directory.CreateDirectory(structuresDir); }
 
-            read(false);
-
-            if (structures.Count != dirCount) { read(true); }
+            read();
+            compare();
 
             structures.Sort((x, y) => x.FileName.CompareTo(y.FileName));
         }
@@ -63,24 +62,47 @@ namespace rMOD.Functions
             }
         }
 
-        static void read(bool addNew)
+        // TODO: I'm stupid and don't actually compare files with those in the structures directory
+        static void read()
         {
+            // Read structures.info
             using (StreamReader sr = new StreamReader(infoPath))
             {
                 string curLine = null;
                 while ((curLine = sr.ReadLine()) != null)
                 {
                     string[] lineBlocks = curLine.Split('|');
-                    StructureInfo sInfo = new StructureInfo()
+                    structures.Add(new StructureInfo()
                     {
                         Path = lineBlocks[1],
                         FileName = lineBlocks[2],
                         TableName = lineBlocks[3],
-                    };
-
-                    if (!addNew || addNew && structures.FindIndex(s => s.FileName == sInfo.FileName) == -1) { structures.Add(sInfo); }
+                    });
                 }
             }
+        }
+
+        static void compare()
+        {
+            bool save = false;
+            List<string> structFiles = new List<string>(Directory.GetFiles(structuresDir));
+            foreach (string structPath in structFiles)
+            {
+                string fileName = System.IO.Path.GetFileName(structPath);
+                string key = System.IO.Path.GetFileNameWithoutExtension(structPath);
+                if (structures.FindIndex(s=>s.Key == key) == -1)
+                {
+                    save = true;
+                    structures.Add(new StructureInfo()
+                    {
+                        Path = structPath,
+                        FileName = GuessName.Result(key, NameType.File),
+                        TableName = GuessName.Result(key, NameType.Table)
+                    });
+                }
+            }
+
+            if (save) { Save(); }
         }
 
         public static void Save()

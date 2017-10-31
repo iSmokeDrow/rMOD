@@ -15,6 +15,25 @@ namespace rMOD
     // TODO: Add possible error catching if a structure has an invalid type
     // TODO: Write centralized logging/display system for notices, errors etc..
     // TODO: Add support for pressing enter key on inputGUI
+    // TODO: During SQL load check if data has been loaded, if so clear it
+    // TODO: Create Launcher home-tab
+    // Perhaps allow launching multiple tabs at once
+    // TODO: Create tab type enum
+    // - TabType.RDB / TabType.Data / TabType.Script
+    // TODO: Add 'Scripts' to menu-bar
+    // TODO: Create rMOD.Functions.LUA to parse scripts
+    // TODO: Create interface functions that Scripts can call
+    // ------ GUI Calls
+    // - ShowInput, - ShowFileDlg, - ShowDirectoryDlg, ShowMessageBox
+    // ------ Tab Control Calls
+    // - AddControl, - RemoveControl, - SetControlText, - GetControlValue, - SetControlValue, - SetControlCollection, SetControlPosition,
+    // - SetControlAnchor, - SetControlDock, - Exit 
+    // TODO: Port rHash and item_use_flag generator to LUA 
+    // TODO: Merge Grimoire concept into rMOD as TabType.Data
+        // Correct DataCore.RebuildDataFile() method
+        // Port Glandu2 nx3 parser to c#, design api to determine format type
+    // TODO: Allow loading of .rdb stored in Data.XXX directly without dumping
+    // TODO: Implement exporting all related resources to an entry (e.g. db_item, export nx3, related dds, icons and .spr)
     public partial class GUI : Form
     {
         #region Properties
@@ -37,11 +56,15 @@ namespace rMOD
 
         private string tabName { get { return tabs.SelectedTab.Text; } }
 
-        public TabControls TabControls { get { return (TabControls)tabs.TabPages[tabIdx].Controls[string.Format("tab_{0}_controls", tabIdx)]; } }
-        internal TabControls getTabControls(string name)
+        public rdbTab RDBControls { get { return (rdbTab)tabs.TabPages[tabIdx].Controls[string.Format("tab_{0}_controls", tabIdx)]; } }
+        internal rdbTab getRDBControls(string name)
         {
             int desiredIdx = tabs.TabPages.IndexOfKey(name);
-            return (TabControls)tabs.TabPages[desiredIdx].Controls[string.Format("tab_{0}_controls", desiredIdx)];
+            return (rdbTab)tabs.TabPages[desiredIdx].Controls[string.Format("tab_{0}_controls", desiredIdx)];
+        }
+        internal rdbTab getRDBControls(int idx)
+        {
+            return (rdbTab)tabs.TabPages[idx].Controls[string.Format("tab_{0}_controls", idx)];
         }
 
         public Core rCore { get { return (tabIdx > -1) ? rdbCores[tabIdx]: null; } }
@@ -56,66 +79,73 @@ namespace rMOD
 
         #region Methods
 
-        public void UpdateProgressMaximum(int max) { this.Invoke(new MethodInvoker(delegate { TabControls.SetProgressMaximum(max); })); }
+        public void UpdateProgressMaximum(int max) { this.Invoke(new MethodInvoker(delegate { RDBControls.SetProgressMaximum(max); })); }
 
-        public void UpdateProgressValue(int val) { this.Invoke(new MethodInvoker(delegate { TabControls.SetProgressValue(val); })); }
+        public void UpdateProgressValue(int val) { this.Invoke(new MethodInvoker(delegate { RDBControls.SetProgressValue(val); })); }
 
         public void UpdateStatusText(string text) { this.Invoke(new MethodInvoker(delegate { status.Text = text; })); }
 
-        public void CreateTab(string name, string text)
+        // TODO: Add third argument?
+        public void CreateTab(TabStyle style, string name, string text)
         {
             tabs.TabPages.Add(name, text);
             int curIdx = tabs.TabPages.IndexOfKey(name);
+           
+            switch (style)
+            {
+                case TabStyle.RDB:
+                    // Generate controls for tab and set events
+                    tabs.TabPages[curIdx].Controls.Add(new rdbTab() { Name = string.Format("tab_{0}_controls", curIdx), Dock = DockStyle.Fill });
+                    
+                    // Set encodings for this tab
+                    getRDBControls(name).SetEncodings(Encodings.Names);
 
-            // Generate controls
-            tabs.TabPages[curIdx].Controls.Add(new TabControls() { Name = string.Format("tab_{0}_controls", curIdx), Dock = DockStyle.Fill });
+                    // Load structure names for this tab
+                    getRDBControls(name).SetStructuresNames(StructureManager.GetNames());
 
-            // Set events
-            getTabControls(name).SetStructureListChangedEvent(structureList_SelectedIndexChanged);
-            getTabControls(name).SetStructureListBtnClickEvent(loadStructBtn_Click);
-            getTabControls(name).SetGridCellValueNeededEvent(Grid.Grid_CellValueNeeded);
-            getTabControls(name).SetEncodingListChangedEvent(encoding_SelectedIndexChanged);          
-            getTabControls(name).SetSearchDataBtnClickEvent(searchDataBtn_Click);
+                    // Set events
+                    getRDBControls(name).SetStructureListChangedEvent(structureList_SelectedIndexChanged);
+                    getRDBControls(name).SetStructureListBtnClickEvent(loadStructBtn_Click);
+                    getRDBControls(name).SetGridCellValueNeededEvent(Grid.Grid_CellValueNeeded);
+                    getRDBControls(name).SetGridCellValuePushedEvent(Grid.Grid_CellPushed);
+                    getRDBControls(name).SetEncodingListChangedEvent(encoding_SelectedIndexChanged);
+                    getRDBControls(name).SetSearchDataBtnClickEvent(searchDataBtn_Click);
 
-            // Set encodings for this tab
-            getTabControls(name).SetEncodings(Encodings.Names);
+                    // Add IO engine instance for this tab
+                    rdbCores.Add(new Core(RDBControls.EncodingValue));
 
-            // Load structure names for this tab
-            getTabControls(name).SetStructuresNames(StructureManager.GetNames());
-
-            // Add IO engine instance for this tab
-            rdbCores.Add(new Core(TabControls.EncodingValue));
-
-            // Register events from this core
-            rdbCores[curIdx].ProgressMaxChanged += GUI_ProgressMaxChanged;
-            rdbCores[curIdx].ProgressValueChanged += GUI_ProgressValueChanged;
+                    // Register events from this core
+                    rdbCores[curIdx].ProgressMaxChanged += GUI_ProgressMaxChanged;
+                    rdbCores[curIdx].ProgressValueChanged += GUI_ProgressValueChanged;
+                    break;
+            }
         }
 
         private void GUI_ProgressValueChanged(object sender, ProgressValueArgs e)
         {
-            if (InvokeRequired) { this.Invoke(new MethodInvoker(delegate { TabControls.SetProgressValue(e.Value); })); }
-            else { TabControls.SetProgressValue(e.Value); }
+            if (InvokeRequired) { this.Invoke(new MethodInvoker(delegate { RDBControls.SetProgressValue(e.Value); })); }
+            else { RDBControls.SetProgressValue(e.Value); }
         }
 
         private void GUI_ProgressMaxChanged(object sender, ProgressMaxArgs e)
         {
-            if (InvokeRequired) { this.Invoke(new MethodInvoker(delegate { TabControls.SetProgressMaximum(e.Maximum); })); }
-            else { TabControls.SetProgressMaximum(e.Maximum); }           
+            if (InvokeRequired) { this.Invoke(new MethodInvoker(delegate { RDBControls.SetProgressMaximum(e.Maximum); })); }
+            else { RDBControls.SetProgressMaximum(e.Maximum); }           
         }
 
-        public void SetTabText() { tabs.TabPages[tabIdx].Text = string.Format("<{0}>", TabControls.StructureListValue); }
+        public void SetTabText() { tabs.TabPages[tabIdx].Text = string.Format("<{0}>", RDBControls.StructureListValue); }
 
         async void readRDB()
         {
             UpdateStatusText("Parsing RDB File...");
             changeTabsState(false);
-            await Task.Run(() => { rCore.ParseRDB(TabControls.FilePath); });
+            await Task.Run(() => { rCore.ParseRDB(RDBControls.FilePath); });
             changeTabsState(true);
-            tabs.TabPages[tabIdx].Text = TabControls.FileName;
+            tabs.TabPages[tabIdx].Text = RDBControls.FileName;
             UpdateStatusText("Populating grid rows...");
-            Grid.LoadData(TabControls.ColumnsSet);
+            Grid.LoadData(RDBControls.ColumnsSet);
             UpdateStatusText("");
-            tabs.TabPages[tabIdx].ToolTipText = string.Format("File Name: {0}\nDate Created: {1}\nRows: {2}", StructureManager.FileName(TabControls.StructureListValue), generateDate(rCore.CreatedDate), rCore.RowCount);
+            //tabs.TabPages[tabIdx].ToolTipText = string.Format("File Name: {0}\nDate Created: {1}\nRows: {2}", StructureManager.FileName(RDBControls.StructureListValue), generateDate(rCore.CreatedDate), rCore.RowCount);
             disableStructureList();
         }
 
@@ -123,12 +153,12 @@ namespace rMOD
         {
             try
             {
-                rCore.Initialize(StructureManager.Path(TabControls.StructureListValue));
-                TabControls.SetSearchColumns(await Task<List<string>>.Factory.StartNew(() => getColumns()));
-                tabs.TabPages[tabIdx].Text = string.Format("<{0}>", TabControls.StructureListValue);
-                TabControls.SetStructBtnText("Loaded");
+                rCore.Initialize(StructureManager.Path(RDBControls.StructureListValue));
+                RDBControls.SetSearchColumns(await Task<List<string>>.Factory.StartNew(() => getColumns()));
+                tabs.TabPages[tabIdx].Text = string.Format("<{0}>", RDBControls.StructureListValue);
+                RDBControls.SetStructBtnText("Loaded");
             }
-            catch (SyntaxErrorException ex) { LuaException.Print(ex.DecoratedMessage, TabControls.StructureListValue); }
+            catch (SyntaxErrorException ex) { LuaException.Print(ex.DecoratedMessage, RDBControls.StructureListValue); }
             catch (Exception ex) { MessageBox.Show(string.Format("An exception has occured!\n\nException Message:\n\n{0}", ex.Message), "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
@@ -141,8 +171,8 @@ namespace rMOD
 
         private void disableStructureList()
         {
-            TabControls.StructureListEnabled = false;
-            TabControls.StructureLoadButtonEnabled = false;
+            RDBControls.StructureListEnabled = false;
+            RDBControls.StructureLoadButtonEnabled = false;
         }
 
         void changeTabsState(bool enabled) { tabs.Enabled = enabled; }
@@ -164,7 +194,7 @@ namespace rMOD
         {
             OPT.Load();
             StructureManager.Load();
-            CreateTab("tab_0", "<Unknown>");
+            CreateTab(TabStyle.RDB, "tab_0", "<Uknown>");
             useASCIIBtn.Checked = OPT.GetBool("use.ascii");
         }
 
@@ -188,17 +218,17 @@ namespace rMOD
 
         private void searchDataBtn_Click(object sender, EventArgs e)
         {           
-            if (TabControls.GridRows > 0 && TabControls.SearchValue != null)
+            if (RDBControls.GridRows > 0 && RDBControls.SearchValue != null)
             {
                 UpdateStatusText("Searching data...");
 
-                foreach (DataGridViewRow row in TabControls.DataGrid.Rows)
+                foreach (DataGridViewRow row in RDBControls.DataGrid.Rows)
                 {
                     if (row.Cells[0].Value != null)
                     {
-                        if (row.Cells[TabControls.SearchColumn].Value.ToString() == TabControls.SearchValue)
+                        if (row.Cells[RDBControls.SearchColumn].Value.ToString() == RDBControls.SearchValue)
                         {
-                            TabControls.DataGrid.CurrentCell = row.Cells[TabControls.SearchColumn];
+                            RDBControls.DataGrid.CurrentCell = row.Cells[RDBControls.SearchColumn];
                             row.Selected = true;
                         }
                     }                  
@@ -208,16 +238,31 @@ namespace rMOD
             }
         }
 
-        private void structureList_SelectedIndexChanged(object sender, EventArgs e) { if (TabControls.StructureListIndex != -1) { if (OPT.GetBool("structure.autoload")) { loadStructure(); } } }
+        private void structureList_SelectedIndexChanged(object sender, EventArgs e) { if (RDBControls.StructureListIndex != -1) { if (OPT.GetBool("structure.autoload")) { loadStructure(); } } }
 
-        private void encoding_SelectedIndexChanged(object sender, EventArgs e) { if (TabControls.EncodingIndex > 0) { rdbCores[tabIdx].SetEncoding(TabControls.EncodingValue); } }
+        private void encoding_SelectedIndexChanged(object sender, EventArgs e) { if (RDBControls.EncodingIndex > 0) { rdbCores[tabIdx].SetEncoding(RDBControls.EncodingValue); } }
 
-        private void loadStructBtn_Click(object sender, EventArgs e) { if (TabControls.StructureListIndex != -1) { loadStructure(); } }
+        private void loadStructBtn_Click(object sender, EventArgs e) { if (RDBControls.StructureListIndex != -1) { loadStructure(); } }
 
         private void newTab_Click(object sender, EventArgs e)
         {
             int newIdx = tabs.TabPages.Count;
-            CreateTab(string.Format("tab_{0}", newIdx), "<Unknown>");
+
+            switch (((ToolStripMenuItem)sender).Name)
+            {
+                case "tabsNewRDB_btn":
+                    CreateTab(TabStyle.RDB, string.Format("tab_{0}", newIdx), "<Uknown[RDB]>");
+                    break;
+
+                case "tabsNewData_btn":
+                    CreateTab(TabStyle.Data, string.Format("tab_{0}", newIdx), "<Uknown[Data]>");
+                    break;
+
+                case "tabsNewScript_btn":
+                    CreateTab(TabStyle.Data, string.Format("tab_{0}", newIdx), "<Uknown[Script]>");
+                    break;
+            }
+            
         }
 
         private void closeTab_Click(object sender, EventArgs e)
@@ -230,7 +275,7 @@ namespace rMOD
 
         private void resetTab_Click(object sender, EventArgs e)
         {
-            TabControls.Reset();
+            RDBControls.Reset();
             rCore.ClearData();
         }
 
@@ -238,16 +283,16 @@ namespace rMOD
 
         private void readFileBtn_Click(object sender, EventArgs e)
         {
-            if (TabControls.StructureListIndex != -1)
+            if (RDBControls.StructureListIndex != -1)
             {
-                using (OpenFileDialog ofDlg = new OpenFileDialog() { Filter = "RDB files (*.rdb)|*.rdb|All files (*.*)|*.*", Title = "Select your rdb", FileName = StructureManager.FileName(TabControls.StructureListValue) })
+                using (OpenFileDialog ofDlg = new OpenFileDialog() { Filter = "All files (*.*)|*.*|RDB files (*.rdb)|*.rdb|REF files (*.ref)|*.ref", Title = "Select your rdb", FileName = StructureManager.FileName(RDBControls.StructureListValue) })
                 {
                     string filePath = null;
                     ofDlg.ShowDialog(this);
                     if (!string.IsNullOrEmpty(ofDlg.FileName)) { filePath = ofDlg.FileName; }
                     if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
                     {
-                        TabControls.FilePath = filePath; 
+                        RDBControls.FilePath = filePath; 
                         readRDB();
                     }
                 }
@@ -257,10 +302,10 @@ namespace rMOD
 
         private void loadSQLBtn_Click(object sender, EventArgs e)
         {
-            if (TabControls.StructureListIndex != -1)
+            if (RDBControls.StructureListIndex != -1)
             {
                 string tableName = null;
-                using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(TabControls.StructureListValue)))
+                using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(RDBControls.StructureListValue)))
                 {
                     input.ShowDialog();
                     tableName = input.Input;
@@ -274,7 +319,7 @@ namespace rMOD
 
                     changeTabsState(false);
                     rCore.SetData(Database.FetchTable(rowCount, tableName));
-                    Grid.LoadData(TabControls.ColumnsSet);
+                    Grid.LoadData(RDBControls.ColumnsSet);
                     tabs.TabPages[tabIdx].ToolTipText = string.Format("Table Name: {0}\nRows: {1}", tableName, rowCount);
                     disableStructureList();
                     changeTabsState(true);
@@ -287,20 +332,20 @@ namespace rMOD
         {
             DataCore.Core dCore = new DataCore.Core();
 
-            if (TabControls.GridRows > 0)
+            if (RDBControls.GridRows > 0)
             {
                 string savePath = OPT.GetString("save.directory");
                 if (string.IsNullOrEmpty(savePath))               
                 {
-                    string structFileName = string.Concat(StructureManager.FileName(TabControls.StructureListValue),".rdb");
+                    string structFileName = structFileName = string.Format(@"{0}.{1}", StructureManager.FileName(RDBControls.StructureListValue), rCore.Extension);
                     string fileName = OPT.GetBool("save.hashed") ? dCore.EncodeName(structFileName) : structFileName;
 
-                    using (SaveFileDialog sfDlg = new SaveFileDialog() { Filter = "RDB files (*.rdb)|*.rdb|All files (*.*)|*.*", Title = "Define the name of your rdb", FileName = fileName })
+                    using (SaveFileDialog sfDlg = new SaveFileDialog() { Filter = "All files (*.*)|*.*|RDB files (*.rdb)|*.rdb|REF files (*.ref)|*.ref", Title = "Define the name of your rdb", FileName = fileName })
                     {
                         if (sfDlg.ShowDialog(this) == DialogResult.OK) { if (!string.IsNullOrEmpty(sfDlg.FileName)) { savePath = sfDlg.FileName; } }
                     }
                 }
-                else { savePath += GuessName.Result(TabControls.StructureListValue, NameType.File); }
+                else { savePath += GuessName.Result(RDBControls.StructureListValue, NameType.File); }
 
                 if (!string.IsNullOrEmpty(savePath)) { await Task.Run(() => { rdbCores[tabIdx].WriteRDB(savePath); }); }
             }
@@ -308,10 +353,10 @@ namespace rMOD
 
         async void saveSQLBtn_Click(object sender, EventArgs e)
         {
-            if (TabControls.GridRows > 0)
+            if (RDBControls.GridRows > 0)
             {
                 string tableName = null;
-                using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(TabControls.StructureListValue)))
+                using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(RDBControls.StructureListValue)))
                 {
                     input.ShowDialog();
                     tableName = input.Input;
@@ -354,7 +399,7 @@ namespace rMOD
         private void reload_Click(object sender, EventArgs e)
         {
             resetTab_Click(null, EventArgs.Empty);
-            TabControls.ResetColumns();
+            RDBControls.ResetColumns();
             loadStructBtn_Click(null, EventArgs.Empty);
             readRDB();
         }

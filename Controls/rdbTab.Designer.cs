@@ -1,6 +1,6 @@
 ﻿namespace rMOD.Controls
 {
-    partial class TabControls
+    partial class rdbTab
     {
         /// <summary> 
         /// Required designer variable.

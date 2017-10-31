@@ -45,7 +45,6 @@
             this.structureGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.structureGrid.Location = new System.Drawing.Point(12, 30);
             this.structureGrid.Name = "structureGrid";
-            this.structureGrid.RowHeadersVisible = false;
             this.structureGrid.Size = new System.Drawing.Size(481, 370);
             this.structureGrid.TabIndex = 0;
             // 

@@ -13,7 +13,7 @@ namespace rMOD.Functions
         public static void LoadData(bool columnsSet)
         {
             if (!columnsSet) { generateColumns(); }
-            GUI.Instance.TabControls.SetGridRowcount(GUI.Instance.rCore.RowCount);
+            GUI.Instance.RDBControls.SetGridRowcount(GUI.Instance.rCore.RowCount + 1);
         }
 
         private static void generateColumns()
@@ -36,7 +36,7 @@ namespace rMOD.Functions
                 };
             }
 
-            GUI.Instance.TabControls.AddGridColumns(columns);
+            GUI.Instance.RDBControls.AddGridColumns(columns);
         }
 
         public static void Grid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
@@ -44,11 +44,20 @@ namespace rMOD.Functions
             if (GUI.Instance.rCore != null)
             {
                 int rowCount = GUI.Instance.rCore.RowCount;
-
-                if (e.RowIndex == rowCount - 1) return;
+                if (e.RowIndex == rowCount || e.RowIndex > rowCount) { return; }
                 if (e.RowIndex == 0 & rowCount == 0) { return; }
                 Row row = GUI.Instance.rCore.GetRow(e.RowIndex);
                 e.Value = row[e.ColumnIndex];
+            }
+        }
+
+        internal static void Grid_CellPushed(object sender, DataGridViewCellValueEventArgs e)
+        {
+            if (GUI.Instance.rCore != null)
+            {
+                if (e.RowIndex == GUI.Instance.rCore.RowCount) { GUI.Instance.rCore.Data.Add(new Row(GUI.Instance.rCore.FieldList)); }
+
+                GUI.Instance.rCore.Data[e.RowIndex][e.ColumnIndex] = e.Value;
             }
         }
     }

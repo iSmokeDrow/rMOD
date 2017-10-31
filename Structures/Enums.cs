@@ -34,4 +34,11 @@ namespace rMOD.Structures
         November = 11,
         December = 12,
     }
+
+    public enum TabStyle
+    {
+        RDB = 0,
+        Data = 1,
+        Script = 2
+    }
 }

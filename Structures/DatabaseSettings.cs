@@ -6,10 +6,10 @@ namespace rMOD.Structures
 {
     public class DatabaseSettings
     {
-        [Description("The IP at which your database can be connected to") Category("Connection")]
+        [Description("The IP at which your database can be connected to"), Category("Connection")]
         public string IP { get { return OPT.GetString("db.ip"); } set { OPT.UpdateSetting("db.ip", value.ToString()); } }
 
-        [Description("The Port (if any) your database is behind") Category("Connection"), DefaultValue(1433)]
+        [Description("The Port (if any) your database is behind"), Category("Connection"), DefaultValue(1433)]
         public int Port { get { return OPT.GetInt("db.port"); } set { OPT.UpdateSetting("db.port", value.ToString()); } }
 
         [Description("Determines if rMOD will use Windows Authentication to connect to the database, this does not require Username/Password."), Category("Connection"), DefaultValue(false)]
