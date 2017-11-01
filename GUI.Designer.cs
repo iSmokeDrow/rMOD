@@ -189,6 +189,7 @@
             // 
             // tabsNewData_btn
             // 
+            this.tabsNewData_btn.Enabled = false;
             this.tabsNewData_btn.Name = "tabsNewData_btn";
             this.tabsNewData_btn.Size = new System.Drawing.Size(152, 22);
             this.tabsNewData_btn.Text = "Data";
@@ -196,6 +197,7 @@
             // 
             // tabsNewScript_btn
             // 
+            this.tabsNewScript_btn.Enabled = false;
             this.tabsNewScript_btn.Name = "tabsNewScript_btn";
             this.tabsNewScript_btn.Size = new System.Drawing.Size(152, 22);
             this.tabsNewScript_btn.Text = "Script";

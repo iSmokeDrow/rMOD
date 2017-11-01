@@ -307,12 +307,11 @@ namespace rMOD
                 string tableName = null;
                 using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(RDBControls.StructureListValue)))
                 {
-                    input.ShowDialog();
-                    tableName = input.Input;
-                }
+                    if (input.ShowDialog() != DialogResult.OK) { return; }
+                    if (string.IsNullOrEmpty(input.Value)) { return; }
+                    
+                    tableName = input.Value;
 
-                if (!string.IsNullOrEmpty(tableName))
-                {
                     tabs.TabPages[tabIdx].Text = tableName;
 
                     int rowCount = Database.FetchRowCount(tableName);
@@ -355,19 +354,9 @@ namespace rMOD
         {
             if (RDBControls.GridRows > 0)
             {
-                string tableName = null;
-                using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(RDBControls.StructureListValue)))
-                {
-                    input.ShowDialog();
-                    tableName = input.Input;
-                }
-
-                if (!string.IsNullOrEmpty(tableName))
-                {
-                    UpdateStatusText("Saving to database...");
-                    await Task.Run(() => { Database.ExportToTable(rCore.Data, tableName); });
-                    UpdateStatusText("");
-                }
+                UpdateStatusText("Saving to database...");
+                await Task.Run(() => { Database.ExportToTable(rCore.Data); });
+                UpdateStatusText("");
             }
         }
 

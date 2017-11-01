@@ -213,8 +213,18 @@ namespace rMOD.Functions
             return data;
         }
 
-        public static void ExportToTable(List<Row> data, string tableName)
+        public static void ExportToTable(List<Row> data)
         {
+            string tableName = string.Empty;
+
+            using (InputGUI input = new InputGUI("Please enter the table name", StructureManager.TableName(GUI.Instance.RDBControls.StructureListValue)))
+            {
+                if (input.ShowDialog() != DialogResult.OK) { return; }
+                if (string.IsNullOrEmpty(input.Value)) { return; }
+
+                tableName = input.Value;
+            }
+
             try
             {
                 if (OPT.GetBool("db.save.backup")) { scriptTable(tableName, true); }
